@@ -1,15 +1,16 @@
-const http = require('http');
+let http = require('http');
+let fs = require('fs');
 
-// const server = http.createServer((req, res) => {
-//   res.end('Welcome')
-// })
-
-// Using Event Emitter API
-const server = http.createServer();
-// emits request event
-// subscribe to it / listen for it / respond to it
-server.on('request', (req, res) => {
-  res.end('Welcome');
-});
-
-server.listen(3000);
+http
+  .createServer(function (req, res) {
+    // const text = fs.readFileSync('./content/big.txt', 'utf-8');
+    // res.end(text);
+    const fileStream = fs.createReadStream('./content/big.txt', 'utf-8');
+    fileStream.on('open', () => {
+      fileStream.pipe(res);
+    });
+    fileStream.on('error', (err) => {
+      res.end(err);
+    });
+  })
+  .listen(3000);
